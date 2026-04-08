@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Rekursi Magic: Penjumlahan 1 sampai n (6)| Struktur Data</title>
+    <!-- Google Fonts & Font Awesome untuk tampilan lebih segar -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f0f4fe 0%, #e9eefa 100%);
+            font-family: 'Inter', sans-serif;
+            padding: 2rem 1.5rem;
+            color: #1e293b;
+        }
+
+        /* container utama */
+        .challenge-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* header section */
+        .hero {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .hero h1 {
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, #1e3c72, #2b4c8a);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .hero h1 i {
+            background: none;
+            color: #3b82f6;
+            font-size: 2rem;
+        }
+
+        .badge-rekursif {
+            background: #0f172b;
+            color: #a5f3fc;
+            padding: 0.25rem 1rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-block;
+            margin-top: 12px;
+            backdrop-filter: blur(4px);
+        }
+
+        /* card grid */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.8rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(2px);
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.1);
+            padding: 1.5rem 1.8rem;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255,255,255,0.6);
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 25px 40px -14px rgba(0,0,0,0.15);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-left: 5px solid #3b82f6;
+            padding-left: 16px;
+        }
+
+        .control-panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: flex-end;
+            margin: 1.2rem 0 1.5rem;
+        }
+
+        .input-group {
+            flex: 2;
+            min-width: 150px;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #334155;
+        }
+
+        .number-input {
+            width: 100%;
+            padding: 12px 14px;
+            font-size: 1.2rem;
+            font-family: 'Fira Code', monospace;
+            border: 2px solid #cbd5e1;
+            border-radius: 1.2rem;
+            background: white;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+
+        .number-input:focus {
+            border-color: #3b82f6;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+        }
+
+        .btn {
+            background: #1e293b;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 2rem;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'Inter', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            box-shadow: 0 5px 12px rgba(37,99,235,0.3);
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+            transform: scale(1.02);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #3b82f6;
+            color: #1e40af;
+        }
+
+        .btn-outline:hover {
+            background: #eef2ff;
+        }
+
+        .result-box {
+            background: #0f172a;
+            border-radius: 1.5rem;
+            padding: 1rem 1.5rem;
+            margin-top: 1rem;
+            color: #e2e8f0;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .result-number {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: #facc15;
+            line-height: 1;
+        }
+
+        /* call stack simulation */
+        .stack-area {
+            background: #0f172a;
+            border-radius: 1.5rem;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .stack-title {
+            color: #94a3b8;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .stack-list {
+            display: flex;
+            flex-direction: column-reverse;
+            gap: 8px;
+            max-height: 320px;
+            overflow-y: auto;
+        }
+
+        .stack-item {
+            background: #1e293b;
+            border-left: 4px solid #f97316;
+            padding: 8px 12px;
+            border-radius: 1rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #cbd5e1;
+        }
+
+        .stack-call {
+            font-weight: 500;
+            color: #facc15;
+        }
+
+        .stack-status {
+            font-size: 0.7rem;
+            background: #2d3a4e;
+            padding: 2px 8px;
+            border-radius: 20px;
+        }
+
+        .step-mundur {
+            background: #fef9e3;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-left: 4px solid #facc15;
+        }
+
+        .final-answer {
+            background: linear-gradient(120deg, #0f172a, #111827);
+            border-radius: 1.5rem;
+            padding: 1rem 1.5rem;
+            text-align: center;
+        }
+
+        @media (max-width: 900px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            body {
+                padding: 1rem;
+            }
+            .hero h1 {
+                font-size: 1.6rem;
+            }
+        }
+
+        .footnote {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.75rem;
+            color: #475569;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .glow {
+            animation: pulse 0.5s ease;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.7; transform: scale(0.99);}
+            100% { opacity: 1; transform: scale(1);}
+        }
+    </style>
+</head>
+<body>
+
+<div class="challenge-container">
+    <div class="hero">
+        <h1>
+            <i class="fas fa-code-branch"></i> 
+            Rekursi Magic: 1 + 2 + ... + n
+        </h1>
+        <div class="badge-rekursif">
+            <i class="fas fa-layer-group"></i> Base Case · Recursive Case · Call Stack (LIFO)
+        </div>
+        <p style="margin-top: 12px; max-width: 700px; margin-left: auto; margin-right: auto; color: #2d3e50;">
+            Fungsi memanggil dirinya sendiri layaknya <strong>forward message</strong> berantai. 
+            Tentukan <strong>Base Case</strong> (n == 1) dan <strong>Recursive Case</strong> (n + sum(n-1)).
+        </p>
+    </div>
+
+    <div class="dashboard">
+        <!-- Panel Kiri: Kontrol + Hasil -->
+        <div class="card">
+            <div class="card-title">
+                <i class="fas fa-calculator"></i> 
+                🧠 Eksplorasi Rekursi
+            </div>
+            <div class="control-panel">
+                <div class="input-group">
+                    <label><i class="fas fa-sort-numeric-up-alt"></i> Nilai n (max 10 agar visual rapi)</label>
+                    <input type="number" id="inputN" class="number-input" value="6" min="1" max="12" step="1">
+                </div>
+                <button id="btnHitung" class="btn btn-primary"><i class="fas fa-play"></i> Jalankan Rekursi</button>
+                <button id="btnReset" class="btn btn-outline"><i class="fas fa-undo-alt"></i> Reset</button>
+            </div>
+
+            <div class="result-box">
+                <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                    <span><i class="fas fa-chalkboard-user"></i> Hasil Akhir:</span>
+                    <span class="result-number" id="finalResult">—</span>
+                </div>
+                <div style="font-size: 0.8rem; margin-top: 8px;" id="formulaPreview">
+                    sum(6) = 6 + 5 + 4 + 3 + 2 + 1 = ?
+                </div>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <div class="card-title" style="font-size: 1.2rem;">
+                    <i class="fas fa-code"></i> Kode Rekursif
+                </div>
+                <pre style="background: #0f172a; padding: 14px; border-radius: 1rem; color: #cbd5e6; font-family: 'Fira Code'; font-size: 0.8rem; overflow-x: auto;">
+function sum(n) {
+    if (n == 1) return 1;        // ✨ Base Case
+    else return n + sum(n - 1);  // 🔁 Recursive Case
+}
+                </pre>
+                <p style="font-size: 0.7rem; margin-top: 8px; color: #2c3e66;">
+                <i class="fas fa-info-circle"></i> Base Case (n == 1) → berhenti. Recursive: pecah masalah menjadi n + sum(n-1)
+                </p>
+            </div>
+        </div>
+
+        <!-- Panel Kanan: Simulasi Call Stack (Fase PUSH & POP) -->
+        <div class="card">
+            <div class="card-title">
+                <i class="fas fa-memory"></i> 
+                📚 Call Stack · LIFO (Last In First Out)
+            </div>
+            <div class="stack-area">
+                <div class="stack-title">
+                    <i class="fas fa-arrow-down"></i> FASE MASUK (PUSH) — Pending Calls
+                </div>
+                <div id="stackPushList" class="stack-list">
+                    <div class="stack-item" style="justify-content: center; opacity: 0.7;">🔍 Belum ada eksekusi</div>
+                </div>
+            </div>
+
+            <div class="step-mundur" id="popPhase">
+                <div style="font-weight: 600; font-size: 0.85rem;"><i class="fas fa-arrow-up"></i> FASE MUNDUR (POP) — Menggabungkan hasil</div>
+                <div id="popSteps" style="font-family: 'Fira Code'; font-size: 0.75rem; margin-top: 8px; color: #1f2a3e;">
+                    Klik "Jalankan Rekursi" untuk melihat alur balik
+                </div>
+            </div>
+            
+            <div class="final-answer" id="finalExplanation">
+                <i class="fas fa-brain"></i> <strong>Proses Rekursi:</strong> Fungsi menyelam hingga n=1, lalu merambat kembali menjumlah.
+            </div>
+        </div>
+    </div>
+
+    <!-- Step by Step detail (penjelasan eksplisit setiap panggilan) -->
+    <div class="card" style="margin-top: 0.5rem;">
+        <div class="card-title">
+            <i class="fas fa-list-ol"></i> 
+            🧩 Step-by-Step: dari Panggilan Awal hingga Hasil Akhir
+        </div>
+        <div id="stepDetail" style="background: #f8fafc; border-radius: 1.2rem; padding: 1rem; font-size: 0.85rem; font-family: 'Fira Code', monospace; max-height: 280px; overflow-y: auto;">
+            <span style="color: #4b5563;">Tekan tombol hijau untuk melihat simulasi rekursi untuk n = 6 (atau n pilihanmu).</span>
+        </div>
+    </div>
+    
+    <div class="footnote">
+        <i class="fas fa-lightbulb"></i> Berdasarkan materi Struktur Data pert. 7: Base case menghentikan rekursi, Call Stack menggunakan prinsip LIFO. 
+        Rekursi elegan namun perlu perhatian pada Stack Overflow.
+    </div>
+</div>
+
+<script>
+    // fungsi rekursif murni (hanya menghitung nilai, tidak untuk animasi)
+    function sumRecursive(n) {
+        if (n === 1) return 1;
+        return n + sumRecursive(n - 1);
+    }
+
+    // Fungsi untuk membangkitkan step-by-step (push & pop) tanpa efek samping berlebihan
+    function generateRecursiveSteps(n) {
+        if (n < 1) return { pushStack: [], popSequence: [], finalValue: 0, error: true };
+        
+        // 1. Bangun fase PUSH (urutan pemanggilan dari awal hingga base case)
+        const pushStack = [];
+        let current = n;
+        while (current >= 1) {
+            if (current === 1) {
+                pushStack.push({ call: `sum(1)`, type: 'base', returnExpr: '1' });
+            } else {
+                pushStack.push({ call: `sum(${current})`, type: 'recursive', pending: `${current} + sum(${current-1})` });
+            }
+            if (current === 1) break;
+            current--;
+        }
+        
+        // 2. Fase POP (mundur dari base case ke atas)
+        const popSequence = [];
+        let accumulated = 0;
+        // hitung mundur dari 1 hingga n untuk simulasi pop
+        for (let i = 1; i <= n; i++) {
+            if (i === 1) {
+                accumulated = 1;
+                popSequence.push({ step: `POP sum(1) → mengembalikan 1 (BASE CASE)`, value: 1, expr: "1" });
+            } else {
+                const newValue = i + accumulated;
+                popSequence.push({ 
+                    step: `POP sum(${i}) → menerima ${accumulated} dari sum(${i-1}), lalu mengembalikan ${i} + ${accumulated} = ${newValue}`,
+                    value: newValue,
+                    expr: `${i} + ${accumulated} = ${newValue}`
+                });
+                accumulated = newValue;
+            }
+        }
+        
+        const finalVal = accumulated;
+        return { pushStack, popSequence, finalValue: finalVal, error: false };
+    }
+    
+    // membuat tampilan teks detail step-by-step yang lebih manusiawi
+    function renderDetailSteps(n, pushArr, popArr, finalVal) {
+        let html = `<div style="margin-bottom: 12px;"><strong>📌 Eksekusi untuk n = ${n}</strong> &nbsp; ➕ Menghitung 1+2+...+${n}</div>`;
+        html += `<div style="background:#eef2ff; padding:8px 12px; border-radius:16px; margin-bottom: 12px;">
+                    <i class="fas fa-arrow-down"></i> <strong>FASE PENURUNAN (PUSH ke Stack)</strong>
+                 </div>`;
+        // Tampilkan push
+        pushArr.forEach((item, idx) => {
+            if (item.type === 'base') {
+                html += `<div style="margin-left: 12px; margin-bottom: 6px;">🔹 <span style="color:#2563eb;">${item.call}</span> → <strong style="color:#16a34a;">Base Case tercapai!</strong> (return 1)</div>`;
+            } else {
+                html += `<div style="margin-left: 12px; margin-bottom: 6px;">🔸 <span style="color:#c2410c;">${item.call}</span> = ${item.pending} &nbsp; (pending, push ke stack)</div>`;
+            }
+        });
+        
+        html += `<div style="background:#fef9c3; padding:8px 12px; border-radius:16px; margin: 16px 0 12px 0;">
+                    <i class="fas fa-arrow-up"></i> <strong>FASE KEMBALI (POP dari Stack) - Proses Unwinding</strong>
+                 </div>`;
+        popArr.forEach((p, idx) => {
+            html += `<div style="margin-left: 12px; margin-bottom: 8px;">📤 ${p.step} → <span style="background:#1e293b; color:#facc15; padding:2px 8px; border-radius:20px;">nilai kembali = ${p.value}</span></div>`;
+        });
+        
+        html += `<div style="margin-top: 16px; background: #0f172a; color: #facc15; padding: 10px; border-radius: 20px; text-align: center; font-weight: bold;">
+                    ✨ HASIL AKHIR: sum(${n}) = ${finalVal} ✨
+                 </div>`;
+        return html;
+    }
+    
+    // Update tampilan call stack (visual push) dan pop phase serta hasil
+    function updateSimulation(n) {
+        if (isNaN(n) || n < 1) {
+            alert("Masukkan bilangan bulat positif (n ≥ 1)");
+            return false;
+        }
+        if (n > 12) {
+            if (!confirm("n terlalu besar dapat membuat tampilan panjang, tetap lanjut? (masih aman secara komputasi)")) return false;
+        }
+        const steps = generateRecursiveSteps(n);
+        if (steps.error) return false;
+        
+        // 1. Update hasil akhir & formula preview
+        document.getElementById('finalResult').innerText = steps.finalValue;
+        const formulaSum = Array.from({ length: n }, (_, i) => i+1).join(' + ');
+        document.getElementById('formulaPreview').innerHTML = `<i class="fas fa-magic"></i> sum(${n}) = ${formulaSum} = <strong>${steps.finalValue}</strong>`;
+        
+        // 2. Render visual PUSH Stack (dari awal sampai ke base case)
+        const stackContainer = document.getElementById('stackPushList');
+        if (steps.pushStack.length === 0) {
+            stackContainer.innerHTML = '<div class="stack-item">Tidak ada panggilan</div>';
+        } else {
+            // Tampilkan stack dengan urutan terbalik? Tapi konsep LIFO: yang terakhir dipanggil di paling atas.
+            // Agar intuitif seperti gambar di materi: yang terakhir (base case) di atas, kita buat display flex-col-reverse.
+            // Tapi kita akan tampilkan daftar berurutan dari sum(n) sampai sum(1) dengan tanda "TOP" di base case.
+            const reversedVisual = [...steps.pushStack].reverse(); // supaya sum(1) muncul paling atas sesuai stack
+            stackContainer.innerHTML = reversedVisual.map((item, idx) => {
+                let statusLabel = item.type === 'base' ? '⚡ BASE CASE' : '⏳ suspended';
+                let colorStyle = item.type === 'base' ? '#facc15' : '#3b82f6';
+                return `<div class="stack-item">
+                            <span><i class="fas fa-cube"></i> <span class="stack-call">${item.call}</span></span>
+                            <span class="stack-status" style="background:${colorStyle}20; color:${colorStyle};">${statusLabel}</span>
+                        </div>`;
+            }).join('');
+        }
+        
+        // 3. Update fase POP (mundur) dengan urutan yang benar dari base hingga akhir
+        const popDiv = document.getElementById('popSteps');
+        if (steps.popSequence.length) {
+            let popHtml = `<ul style="margin-left: 1rem; list-style-type: none;">`;
+            steps.popSequence.forEach(step => {
+                popHtml += `<li style="margin-bottom: 8px;"><i class="fas fa-chevron-circle-down"></i> ${step.step}</li>`;
+            });
+            popHtml += `</ul><div style="margin-top: 8px; font-weight:500;">✅ Total = ${steps.finalValue}</div>`;
+            popDiv.innerHTML = popHtml;
+        } else {
+            popDiv.innerHTML = 'Tidak ada proses POP';
+        }
+        
+        // 4. Step detail lengkap dengan penjelasan naratif
+        const stepDetailDiv = document.getElementById('stepDetail');
+        stepDetailDiv.innerHTML = renderDetailSteps(n, steps.pushStack, steps.popSequence, steps.finalValue);
+        
+        // 5. Animasi tambahan untuk efek glow di hasil
+        const resultElem = document.getElementById('finalResult');
+        resultElem.classList.add('glow');
+        setTimeout(() => resultElem.classList.remove('glow'), 500);
+        
+        return true;
+    }
+    
+    // event listener untuk tombol hitung
+    const btnHitung = document.getElementById('btnHitung');
+    const inputN = document.getElementById('inputN');
+    const btnReset = document.getElementById('btnReset');
+    
+    function handleRun() {
+        let n = parseInt(inputN.value, 10);
+        if (isNaN(n)) n = 6;
+        if (n < 1) n = 1;
+        if (n > 20) {
+            // tetap bisa tapi untuk performa dan tampilan limit rekomendasi 15
+            if (!confirm("Nilai besar ( > 15 ) masih berfungsi, tetapi tampilan stack panjang. Lanjutkan?")) {
+                inputN.value = 6;
+                n = 6;
+            }
+        }
+        inputN.value = n;
+        updateSimulation(n);
+    }
+    
+    btnHitung.addEventListener('click', handleRun);
+    btnReset.addEventListener('click', () => {
+        inputN.value = 6;
+        updateSimulation(6);
+        // reset default state
+        const defaultSteps = generateRecursiveSteps(6);
+        document.getElementById('finalResult').innerText = defaultSteps.finalValue;
+        document.getElementById('formulaPreview').innerHTML = `sum(6) = 6 + 5 + 4 + 3 + 2 + 1 = <strong>${defaultSteps.finalValue}</strong>`;
+        document.getElementById('stackPushList').innerHTML = '';
+        document.getElementById('popSteps').innerHTML = 'Klik "Jalankan Rekursi" untuk melihat alur balik';
+        const stepDetailDiv = document.getElementById('stepDetail');
+        stepDetailDiv.innerHTML = `<span style="color: #1e293b;">✅ Reset ke contoh n=6. Tekan tombol hijau untuk menjalankan simulasi rekursi lengkap dengan fase PUSH dan POP berdasarkan materi Struktur Data.</span>`;
+        // panggil ulang update untuk sinkron
+        updateSimulation(6);
+    });
+    
+    // inisialisasi pertama kali (n=6)
+    updateSimulation(6);
+    
+    // tambahan interactive: ketika enter di input
+    inputN.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            handleRun();
+        }
+    });
+    
+    // tooltip dinamis: Saat halaman dimuat tampilkan info base case dari materi
+    console.log("Mini Challenge: Rekursi sesuai materi Struktur Data pert.7 | Base case n==1, recursive n + sum(n-1)");
+</script>
+</body>
+</html>
